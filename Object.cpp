@@ -1,59 +1,43 @@
 //
-// Created by erikz on 18.07.2026.
+// Created by erikz on 13.11.2026.
 //
 
 #include "Object.hh"
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
 
 
-Object::Object(std::string path)
-{
 
-    std::ifstream ifs(path);
+Object::Object(Mesh mesh)
+:mesh(mesh) {
 
-    if (!ifs) ;
-
-    std::string line;
-
-    while (std::getline(ifs, line))
-    {
-
-        std::stringstream stream(line);
-
-        std::string token;
-
-        stream >> token;
-
-        if (token == "v")
-        {
-            Vec3<float> v{};
-            stream >> v.x >> v.y >> v.z;
-            Vertices.push_back(v);
-        }
-        else if (token == "f")
-        {
-            Vec3<int> f{};
-            stream >> f.x >> f.y >> f.z;
-            Faces.push_back(f);
-        }
-
-    }
+    objectTransform = Mat4<float>::identity();
 
 }
 
+Object::Object(Mesh mesh, Vec3<float> position)
+:mesh(mesh) {
 
-std::string Object::toString()
-{
+    objectTransform = Mat4<float>::identity();
+    objectTransform[0][3] = position.x;
+    objectTransform[1][3] = position.y;
+    objectTransform[2][3] = position.z;
 
-    std::ostringstream stream;
-    for (const Vec3<float> &v : Vertices)
-    {
-        stream << v.x << " " << v.y << " " << v.z << std::endl;
-    }
+}
 
-    return stream.str();
+Object::Object(Mesh mesh, Mat4<float> transform)
+:mesh(mesh), objectTransform(transform) {
+}
+
+void Object::transform(Mat4<float> transform) {
+
+    transform = transform * objectTransform;
+
+}
+
+void Object::moveTo(Vec3<float> position) {
+
+    objectTransform[0][3] = position.x;
+    objectTransform[1][3] = position.y;
+    objectTransform[2][3] = position.z;
 
 }

@@ -3,13 +3,14 @@
 #include <format>
 #include <iostream>
 #include <windows.h>
-#include "Object.hh"
+#include "Mesh.hh"
 #include "Window.hh"
+#include "Camera.hh"
+#include <vector>
+#include "Object.hh"
 
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
-{
-
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow) {
     Window window{hInstance, cmdshow, 1080, 720};
 
     for (int x = 0; x < window.getWidth(); x++)
@@ -20,40 +21,23 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hInstPrev, PSTR cmdline, int
         }
     }
 
-    Object cube("C:/Users/erikz/Desktop/Cube.obj");
+    std::vector<Object> objects;
 
-    OutputDebugStringA(cube.toString().c_str());
+    Mesh cube("G:/projects/SoftwareRasterizerFromFirstPrinciples/Cube.obj");
 
-    Vec2 a = {window.getWidth()/2,0};
-    Vec2 b = {0,window.getHeight()-1};
-    Vec2 c = {window.getWidth(),window.getHeight()-1};
+    Object cube1(cube);
+
+    objects.push_back(cube1);
 
 
-    for (int x = 0; x < window.getWidth(); x++)
-    {
-        for (int y = 0; y < window.getHeight(); y++)
-        {
-            Vec2 p = {x, y};
 
-            Vec2 AB = b-a;
-            Vec2 AP = p-a;
+    Camera camera{{0,0,-5}, {0,0,1}, {0,1,0}};
 
-            Vec2 BC = c-b;
-            Vec2 BP = p-b;
+    Mat4<float> viewMatrix = camera.getViewMatrix();
 
-            Vec2 CA = a-c;
-            Vec2 CP = p-c;
+    
 
-            float cross1 = AB%AP;
-            float cross2 = BC%BP;
-            float cross3 = CA%CP;
-
-            if ((cross1 >= 0 && cross2 >= 0 && cross3 >= 0) || (cross1 <= 0 && cross2 <= 0 && cross3 <= 0))
-            {
-                window.putPixel(x,y,255,255, 0);
-            }
-        }
-    }
+    window.putPixel(20,20,0,255,0);
 
     window.redraw();
 

@@ -1,27 +1,25 @@
 //
-// Created by erikz on 18.07.2026.
+// Created by erikz on 13.11.2026.
 //
 
-#ifndef SOFTWARERASTERIZERFROMFIRSTPRINCIPLE_OBJECT_HH
-#define SOFTWARERASTERIZERFROMFIRSTPRINCIPLE_OBJECT_HH
-#include <string>
-#include <vector>
+#pragma once
+#include "Mesh.hh"
 
-#include "Math.hh"
-
-class Object
-{
+class Object {
 
 public:
-    Object(std::string path);
 
-    std::string toString();
+    Object(Mesh mesh);
+    Object(Mesh mesh, Vec3<float> position);
+    Object(Mesh mesh, Mat4<float> transform);
+
+    void transform(Mat4<float> transform);
+    void moveTo(Vec3<float> position);
 
 private:
-    std::vector<Vec3<float>> Vertices;
-    std::vector<Vec3<int>> Faces;
+
+    Mesh mesh;
+    Mat4<float> objectTransform;
+
 
 };
-
-
-#endif //SOFTWARERASTERIZERFROMFIRSTPRINCIPLE_OBJECT_HH

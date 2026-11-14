@@ -2,11 +2,16 @@
 // Created by erikz on 18.07.2026.
 //
 
-#ifndef SOFTWARERASTERIZERFROMFIRSTPRINCIPLE_WINDOW_HH
-#define SOFTWARERASTERIZERFROMFIRSTPRINCIPLE_WINDOW_HH
+#pragma once
+
 #include <cstdint>
-#include <Windows.h>
 #include <vector>
+#if defined(_WIN32)
+    #include <Windows.h>
+#elif defined(__linux__)
+    #include <X11/Xlib.h>
+#endif
+
 
 struct frameBuffer
 {
@@ -15,31 +20,39 @@ struct frameBuffer
     std::vector<std::uint32_t> pixels;
 };
 
-class Window
-{
-public:
-    Window(HINSTANCE hInstance, int cmdshow, int width, int height);
-    Window();
 
-    int getWidth();
-    int getHeight();
-    void redraw();
-    void putPixel(int x, int y, int r, int g, int b);
+namespace SR {
+    class Window
+    {
+    public:
+        Window(int width, int height);
 
-private:
+        int getWidth();
+        int getHeight();
+        void redraw();
+        void putPixel(int x, int y, int r, int g, int b);
 
-    int width;
-    int height;
-    HWND hwnd;
+        void close();
 
-    static LRESULT CALLBACK WindowProc(HWND hwnd, const UINT uMsg, WPARAM wParam, LPARAM lParam);
-    LRESULT HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    void OnSize(HWND hwnd, UINT flag, int newWidth, int newHeight);
+        bool processEvents();
 
-    frameBuffer buffer;
+    private:
 
+        int width;
+        int height;
 
-};
+        frameBuffer buffer;
 
+#if defined(_WIN32)
+        HWND handle;
+#elif defined(__linux__)
+        Display* display;
+        ::Window handle;
+        GC gc;
+        XImage* image;
+        int screen;
+#endif
 
-#endif //SOFTWARERASTERIZERFROMFIRSTPRINCIPLE_WINDOW_HH
+    };
+}
+

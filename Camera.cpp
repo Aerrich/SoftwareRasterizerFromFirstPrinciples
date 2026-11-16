@@ -4,11 +4,21 @@
 #include "Camera.hh"
 
 
-Camera::Camera(Vec3<float> position, Vec3<float> lookAt, Vec3<float> up)
-:position(position), lookAt(lookAt), up(up)
+Camera::Camera(Vec3<float> position, Vec3<float> lookAt, Vec3<float> up, float fov, float nearPlane, float farPlane)
+:position(position), lookAt(lookAt), up(up), nearPlane(nearPlane), farPlane(farPlane), fov(fov)
 {
 
 }
+
+Camera::Camera(Vec3<float> position, Vec3<float> lookAt, Vec3<float> up)
+:position(position), lookAt(lookAt), up(up){
+
+    fov = 1.55f;
+    nearPlane = 1.0f;
+    farPlane = 10.0f;
+
+}
+
 
 
 
@@ -36,4 +46,23 @@ Mat4<float> Camera::getViewMatrix() {
 
     return rotation * translation;
 
+}
+
+Mat4<float> Camera::getProjectionMatrix() {
+    return Mat4<float>{
+        {
+            {fov, 0, 0, 0},
+            {0, fov, 0, 0},
+            {0, 0, (farPlane / (farPlane - nearPlane)), -(farPlane * nearPlane) / (farPlane - nearPlane)},
+            {0, 0, 1, 0}
+        }
+    };
+}
+
+float Camera::getFarPlane() {
+    return farPlane;
+}
+
+float Camera::getNearPlane() {
+    return nearPlane;
 }

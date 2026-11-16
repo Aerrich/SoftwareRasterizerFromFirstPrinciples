@@ -18,6 +18,7 @@ struct frameBuffer
     int width;
     int height;
     std::vector<std::uint32_t> pixels;
+    std::vector<float> depth;
 };
 
 

@@ -15,6 +15,8 @@ public:
 
     void transform(Mat4<float> transform);
     void moveTo(Vec3<float> position);
+    Mesh& getMesh();
+    Mat4<float> getTransform();
 
 private:
 

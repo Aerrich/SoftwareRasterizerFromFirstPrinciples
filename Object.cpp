@@ -41,3 +41,11 @@ void Object::moveTo(Vec3<float> position) {
     objectTransform[2][3] = position.z;
 
 }
+
+Mesh& Object::getMesh() {
+    return mesh;
+}
+
+Mat4<float> Object::getTransform() {
+    return objectTransform;
+}

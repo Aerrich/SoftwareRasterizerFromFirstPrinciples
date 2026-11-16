@@ -59,3 +59,12 @@ std::string Mesh::toString()
     return stream.str();
 
 }
+
+
+std::vector<Vec3<float>>& Mesh::getVertices() {
+    return Vertices;
+}
+
+std::vector<Vec3<int>> & Mesh::getFaces() {
+    return Faces;
+}

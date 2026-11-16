@@ -105,6 +105,18 @@ struct Vec4
 {
     T x, y, z, w;
 
+    Vec4() : x{}, y{}, z{}, w{} {}
+
+    Vec4(T x, T y, T z, T w)
+        : x(x), y(y), z(z), w(w) {}
+
+    Vec4(Vec3<T> v, T f) {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+        w = f;
+    }
+
     T& operator[](std::size_t i) {
         switch (i) {
             case 0:
@@ -190,15 +202,15 @@ struct Mat4 {
         return m[i];
     }
 
-    Vec4<T> row(int i) {
+    Vec4<T> row(int i) const{
         return Vec4<T>(m[i][0], m[i][1], m[i][2], m[i][3]);
     }
 
-    Vec4<T> col(int i) {
+    Vec4<T> col(int i) const{
         return Vec4<T>(m[0][i], m[1][i], m[2][i], m[3][i]);
     }
 
-    Mat4<T> operator *(Mat4& x)
+    Mat4<T> operator *(const Mat4& x) const
     {
 
         Mat4<T> result;
@@ -213,7 +225,7 @@ struct Mat4 {
 
     }
 
-    Vec4<T> operator *(Vec4<T>& x) {
+    Vec4<T> operator *(const Vec4<T>& x) {
 
         Vec4<T> result;
 

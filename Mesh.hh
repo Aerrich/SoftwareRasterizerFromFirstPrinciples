@@ -17,7 +17,8 @@ public:
 
     std::string toString();
 
-
+    std::vector<Vec3<float>>& getVertices();
+    std::vector<Vec3<int>>& getFaces();
 
 private:
     std::vector<Vec3<float>> Vertices;

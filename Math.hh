@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
-
+#include <math.h>
 
 
 //TODO SIMD optimization
@@ -250,3 +250,61 @@ std::ostream& operator <<(std::ostream& out, Mat4<T>& v) {
     }
     return out;
 }
+
+
+template <typename T>
+struct Mat2 {
+
+    T m[2][2];
+
+    static Mat2<T> identity() {
+        return Mat2<T>{
+                {
+                    {1, 0},
+                    {0, 1}
+                }};
+    }
+
+    T* operator[](std::size_t i) {
+        if (i >= 2)
+            throw std::out_of_range("Mat2 row index out of range");
+
+        return m[i];
+    }
+
+    Vec2<T> row(int i) const{
+        return Vec2<T>(m[i][0], m[i][1]);
+    }
+
+    Vec2<T> col(int i) const{
+        return Vec2<T>(m[0][i], m[1][i]);
+    }
+
+    Mat2<T> operator *(const Mat2& x) const
+    {
+
+        Mat2<T> result;
+
+        for (int i=0; i<2; i++) {
+            for (int j=0; j<2; j++) {
+                result.m[i][j] = row(i) * x.col(j);
+            }
+        }
+
+        return result;
+
+    }
+
+    Vec2<T> operator *(const Vec2<T>& x) {
+
+        Vec2<T> result;
+
+        for (int i=0; i<2; i++) {
+            result[i] = row(i) * x;
+        }
+
+        return result;
+
+    }
+
+};

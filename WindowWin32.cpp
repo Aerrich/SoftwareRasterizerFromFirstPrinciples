@@ -1,11 +1,13 @@
 //
 // Created by erikzygmanowski on 11/13/26.
 //
+#define UNICODE
 #include "Window.hh"
 #include <Windows.h>
+#include <limits>
 
 namespace SR {
-    void Window::OnSize(HWND hwnd, UINT flag, int newWidth, int newHeight)
+    void OnSize(HWND hwnd, UINT flag, int newWidth, int newHeight, int& width, int& height)
     {
         // Handle resizing
         width = newWidth;
@@ -15,7 +17,7 @@ namespace SR {
     }
 
 
-    LRESULT CALLBACK WindowProc(HWND hwnd, const UINT uMsg, WPARAM wParam, LPARAM lParam)
+    LRESULT CALLBACK Window::WindowProc(HWND hwnd, const UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
 
         Window* window = nullptr;
@@ -33,14 +35,17 @@ namespace SR {
             window = reinterpret_cast<Window*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
         }
 
-        return window->HandleMessage(hwnd, uMsg, wParam, lParam);
+        if (window != nullptr)
+            return window->HandleMessage(hwnd, uMsg, wParam, lParam);
+
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
     }
 
     Window::Window(int width, int height)
     {
 
-        HINSTANCE instance = GetModuleHandleW(nullptr);
+        HINSTANCE hInstance = GetModuleHandleW(nullptr);
 
         this->width = width;
         this->height = height;
@@ -49,6 +54,11 @@ namespace SR {
         buffer.height = height;
 
         buffer.pixels.resize(width * height);
+        buffer.depth.resize(width * height);
+
+        for (float& depth : buffer.depth) {
+            depth = std::numeric_limits<float>::max();
+        }
 
         // Register the window class.
         const wchar_t CLASS_NAME[]  = L"Sample Window Class";
@@ -78,14 +88,14 @@ namespace SR {
             this        // Additional application data
             );
 
-        if (hwnd == nullptr)
+        if (handle == nullptr)
         {
 
         }
 
-        this->hwnd = hwnd;
-        ShowWindow(hwnd, cmdshow);
-        UpdateWindow(hwnd);
+        this->handle = handle;
+        ShowWindow(handle, SW_SHOWNORMAL);
+        UpdateWindow(handle);
 
 
     }
@@ -100,7 +110,7 @@ namespace SR {
                 int newHeight = HIWORD(lParam); // Macro to get the high-order word.
 
                 // Respond to the message:
-                OnSize(hwnd, static_cast<UINT>(wParam), width, height);
+                OnSize(hwnd, static_cast<UINT>(wParam), newWidth, newHeight, width, height);
                 return 0;
             }
             break;
@@ -158,6 +168,28 @@ namespace SR {
 
     void Window::redraw()
     {
-        InvalidateRect(hwnd, nullptr, TRUE);
+        InvalidateRect(handle, nullptr, TRUE);
     }
+
+    bool Window::processEvents() {
+        MSG message{};
+
+        while (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE))
+        {
+            if (message.message == WM_QUIT)
+                return false;
+
+            TranslateMessage(&message);
+            DispatchMessage(&message);
+        }
+
+        return true;
+    }
+
+    void Window::close()
+    {
+        if (handle != nullptr)
+            DestroyWindow(handle);
+    }
+
 }

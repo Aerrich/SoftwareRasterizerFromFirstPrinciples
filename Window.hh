@@ -31,7 +31,11 @@ namespace SR {
         int getWidth();
         int getHeight();
         void redraw();
-        void putPixel(int x, int y, int r, int g, int b);
+        void putPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b);
+
+        float getDepth(int x, int y);
+
+        void setDepth(int x, int y, float depth);
 
         void close();
 
@@ -45,7 +49,14 @@ namespace SR {
         frameBuffer buffer;
 
 #if defined(_WIN32)
+        static LRESULT CALLBACK WindowProc(
+        HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+        LRESULT HandleMessage(
+            HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
         HWND handle;
+
 #elif defined(__linux__)
         Display* display;
         ::Window handle;

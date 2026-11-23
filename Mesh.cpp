@@ -39,6 +39,9 @@ Mesh::Mesh(std::string path)
         {
             Vec3<int> f{};
             stream >> f.x >> f.y >> f.z;
+            f.x--;
+            f.y--;
+            f.z--;
             Faces.push_back(f);
         }
 

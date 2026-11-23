@@ -30,7 +30,7 @@ Object::Object(Mesh mesh, Mat4<float> transform)
 
 void Object::transform(Mat4<float> transform) {
 
-    transform = transform * objectTransform;
+    objectTransform = transform * objectTransform;
 
 }
 
